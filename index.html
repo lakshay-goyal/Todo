@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo Task Master</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Todo Task Master</h1>
+            <div class="stats">
+                <div class="stat-item">
+                    <i class="fas fa-tasks"></i>
+                    <span id="totalTasks">0 Total</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="completedTasks">0 Completed</span>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <input type="text" id="todoInput" placeholder="What needs to be done?">
+                <button class="btn btn-primary" onclick="addTodo()">
+                    <i class="fas fa-plus"></i>
+                    Add Task
+                </button>
+            </div>
+        </div>
+
+        <div class="todos-container" id="todoList">
+            <!-- Todos will be inserted here -->
+        </div>
+    </div>
+
+    <!-- Modal for editing tasks -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Task</h2>
+            <input type="text" id="editInput" placeholder="Edit your task">
+            <button class="btn btn-primary" onclick="updateTodo()">Save Changes</button>
+        </div>
+    </div>
+
+    <!-- Congratulations Modal -->
+    <div id="congratsModal" class="modal">
+        <div class="modal-content congrats-content">
+            <h2>Congratulations!</h2>
+            <p>You've completed all your tasks!</p>
+            <div class="fireworks"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
