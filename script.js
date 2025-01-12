@@ -1,4 +1,6 @@
-let todos = JSON.parse(localStorage.getItem('todos')) || [];
+let todos = JSON.parse(localStorage.getItem('todos')) || {};
+let categories = JSON.parse(localStorage.getItem('categories')) || ['Personal', 'Work', 'Shopping'];
+let currentCategory = null;
 let editingId = null;
 
 function showToast(message, type = 'success') {
@@ -13,17 +15,18 @@ function showToast(message, type = 'success') {
 }
 
 function updateStats() {
-    document.getElementById('totalTasks').textContent = `${todos.length} Total`;
-    const completed = todos.filter(todo => todo.completed).length;
+    const categoryTodos = todos[currentCategory] || [];
+    document.getElementById('totalTasks').textContent = `${categoryTodos.length} Total`;
+    const completed = categoryTodos.filter(todo => todo.completed).length;
     document.getElementById('completedTasks').textContent = `${completed} Completed`;
     
     // Update progress bar
     const progressBar = document.getElementById('progressBar');
-    const progressPercentage = todos.length > 0 ? (completed / todos.length) * 100 : 0;
+    const progressPercentage = categoryTodos.length > 0 ? (completed / categoryTodos.length) * 100 : 0;
     progressBar.style.width = `${progressPercentage}%`;
 
     // Check if all tasks are complete
-    if (completed === todos.length && todos.length > 0) {
+    if (completed === categoryTodos.length && categoryTodos.length > 0) {
         showCongratsModal();
     }
 }
@@ -33,11 +36,54 @@ function saveTodos() {
     updateStats();
 }
 
+function saveCategories() {
+    localStorage.setItem('categories', JSON.stringify(categories));
+}
+
+function renderCategories() {
+    const categoryList = document.getElementById('categoryList');
+    categoryList.innerHTML = '';
+
+    categories.forEach(category => {
+        const categoryItem = document.createElement('div');
+        categoryItem.className = 'category-item';
+        categoryItem.textContent = category;
+        categoryItem.onclick = () => selectCategory(category);
+        categoryList.appendChild(categoryItem);
+    });
+}
+
+function selectCategory(category) {
+    currentCategory = category;
+    document.getElementById('currentCategory').textContent = category;
+    document.getElementById('categoryPage').style.display = 'none';
+    document.getElementById('todoApp').style.display = 'block';
+    renderTodos();
+    updateStats();
+}
+
+function addCategory() {
+    const input = document.getElementById('categoryInput');
+    const category = input.value.trim();
+
+    if (category && !categories.includes(category)) {
+        categories.push(category);
+        saveCategories();
+        renderCategories();
+        input.value = '';
+        showToast('Category added successfully!');
+    } else if (categories.includes(category)) {
+        showToast('Category already exists!', 'error');
+    }
+}
+
 function renderTodos() {
     const todoList = document.getElementById('todoList');
     todoList.innerHTML = '';
 
-    if (todos.length === 0) {
+    const categoryTodos = todos[currentCategory] || [];
+
+    if (categoryTodos.length === 0) {
         todoList.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-clipboard-list"></i>
@@ -47,7 +93,7 @@ function renderTodos() {
         return;
     }
 
-    todos.forEach(todo => {
+    categoryTodos.forEach(todo => {
         const li = document.createElement('div');
         li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
         li.innerHTML = `
@@ -73,6 +119,9 @@ function addTodo() {
     const text = input.value.trim();
 
     if (text) {
+        if (!todos[currentCategory]) {
+            todos[currentCategory] = [];
+        }
         const newTodo = {
             id: Date.now(),
             text,
@@ -80,7 +129,7 @@ function addTodo() {
             createdAt: new Date().toISOString()
         };
 
-        todos.unshift(newTodo);
+        todos[currentCategory].unshift(newTodo);
         saveTodos();
         input.value = '';
         renderTodos();
@@ -89,7 +138,7 @@ function addTodo() {
 }
 
 function toggleTodo(id) {
-    const todo = todos.find(t => t.id === id);
+    const todo = todos[currentCategory].find(t => t.id === id);
     if (todo) {
         todo.completed = !todo.completed;
         saveTodos();
@@ -100,7 +149,7 @@ function toggleTodo(id) {
 
 function openEditModal(id) {
     editingId = id;
-    const todo = todos.find(t => t.id === id);
+    const todo = todos[currentCategory].find(t => t.id === id);
     const modal = document.getElementById('editModal');
     const input = document.getElementById('editInput');
     input.value = todo.text;
@@ -112,7 +161,7 @@ function updateTodo() {
     const newText = input.value.trim();
 
     if (newText) {
-        const todo = todos.find(t => t.id === editingId);
+        const todo = todos[currentCategory].find(t => t.id === editingId);
         if (todo) {
             todo.text = newText;
             todo.updatedAt = new Date().toISOString();
@@ -125,7 +174,7 @@ function updateTodo() {
 }
 
 function deleteTodo(id) {
-    todos = todos.filter(todo => todo.id !== id);
+    todos[currentCategory] = todos[currentCategory].filter(todo => todo.id !== id);
     saveTodos();
     renderTodos();
     showToast('Task deleted!', 'error');
@@ -145,6 +194,16 @@ function showCongratsModal() {
 }
 
 // Event Listeners
+document.getElementById('getStartedBtn').addEventListener('click', function() {
+    document.getElementById('welcomePage').style.display = 'none';
+    document.getElementById('categoryPage').style.display = 'block';
+});
+
+document.getElementById('backToCategories').addEventListener('click', function() {
+    document.getElementById('todoApp').style.display = 'none';
+    document.getElementById('categoryPage').style.display = 'block';
+});
+
 document.getElementById('todoInput').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         addTodo();
@@ -165,6 +224,5 @@ window.onclick = function(event) {
 }
 
 // Initial render
-renderTodos();
-updateStats();
+renderCategories();
 

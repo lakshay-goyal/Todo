@@ -8,36 +8,58 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Todo Task Master</h1>
-            <div class="stats">
-                <div class="stat-item">
-                    <i class="fas fa-tasks"></i>
-                    <span id="totalTasks">0 Total</span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span id="completedTasks">0 Completed</span>
-                </div>
+    <div id="app">
+        <div id="welcomePage" class="welcome-page">
+            <div class="welcome-content">
+                <h1>Todo Task Master</h1>
+                <p>Organize your tasks efficiently</p>
+                <button id="getStartedBtn" class="btn btn-primary">Get Started</button>
             </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
+            <div class="welcome-image"></div>
+        </div>
+
+        <div id="categoryPage" class="category-page" style="display: none;">
+            <h1>Choose a Category</h1>
+            <div id="categoryList" class="category-list"></div>
+            <div class="category-input">
+                <input type="text" id="categoryInput" placeholder="Add new category">
+                <button onclick="addCategory()" class="btn btn-primary">Add</button>
             </div>
         </div>
 
-        <div class="input-section">
-            <div class="input-group">
-                <input type="text" id="todoInput" placeholder="What needs to be done?">
-                <button class="btn btn-primary" onclick="addTodo()">
-                    <i class="fas fa-plus"></i>
-                    Add Task
-                </button>
+        <div id="todoApp" class="container" style="display: none;">
+            <div class="header">
+                <button id="backToCategories" class="btn btn-icon"><i class="fas fa-arrow-left"></i></button>
+                <h1>Todo Task Master</h1>
+                <h2 id="currentCategory"></h2>
+                <div class="stats">
+                    <div class="stat-item">
+                        <i class="fas fa-tasks"></i>
+                        <span id="totalTasks">0 Total</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="completedTasks">0 Completed</span>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
             </div>
-        </div>
 
-        <div class="todos-container" id="todoList">
-            <!-- Todos will be inserted here -->
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="text" id="todoInput" placeholder="What needs to be done?">
+                    <button class="btn btn-primary" onclick="addTodo()">
+                        <i class="fas fa-plus"></i>
+                        Add Task
+                    </button>
+                </div>
+            </div>
+
+            <div class="todos-container" id="todoList">
+                <!-- Todos will be inserted here -->
+            </div>
         </div>
     </div>
 
@@ -63,4 +85,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
